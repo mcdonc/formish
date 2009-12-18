@@ -541,6 +541,24 @@ def form_TextAreaStrip(request):
     form['textAreaStrip'].widget = formish.TextArea(strip=True)
     return form
 
+
+class SimpleSchema(schemaish.Structure):
+    """ A simple sommets form """
+    email = schemaish.String(validator=validatish.All(validatish.Required(), validatish.Email()))
+    first_names = schemaish.String(validator=validatish.Required())
+    last_name = schemaish.String(validator=validatish.Required())
+    comments = schemaish.String()
+
+
+def form_RestishExample(request):
+    """
+    The form used in the restish examples
+    """
+    form = formish.Form(SimpleSchema())
+    form['comments'].widget = formish.TextArea()
+    return form
+
+
 #######################
 #
 #   Validation
@@ -727,6 +745,17 @@ def form_ValidationOnSequenceItem(request):
     form = formish.Form(schema, 'form')
     return form
 
+def form_ValidationOnSequenceItemTextArea(request):
+    """
+    Validation on a sequence item.
+    """
+    schema = schemaish.Structure()
+    schema.add( 'myList', schemaish.Sequence( schemaish.String(validator=validatish.Email()) ))
+
+    form = formish.Form(schema, 'form')
+    form['myList'].widget = formish.TextArea()
+    return form
+
 def form_ValidationOnSequence(request):
     """
     Validation on a collection (sequence).
@@ -750,7 +779,12 @@ def form_RequiredStringAndFile(request):
     schema.add('required', schemaish.String(validator=validatish.Required()))
     schema.add('myFileField', schemaish.File())
     form = formish.Form(schema, 'form')
-    form['myFileField'].widget = formish.FileUpload(filestore=CachedTempFilestore(),show_image_thumbnail=True,image_thumbnail_default='/images/nouploadyet.png',show_download_link=True)
+    form['myFileField'].widget = formish.FileUpload(
+        filestore=CachedTempFilestore(),
+        show_image_thumbnail=True,
+        image_thumbnail_default='/images/nouploadyet.png',
+        show_download_link=True
+    )
     return form
 
 def functest_RequiredStringAndFile(self):
